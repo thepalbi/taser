@@ -1,3 +1,4 @@
+// DO NOT INSTRUMENT
 import * as fs from "fs";
 
 import {iid, Jalangi, JalangiAnalysis} from "../types/Jalangi";
@@ -1527,13 +1528,19 @@ class AintNodeTaint implements JalangiAnalysis {
     return [];
   }
 }
-const analysis = new AintNodeTaint();
-J$.analysis = analysis;
 
-process.on('exit', function() {
-  console.log('exit handler called');
-  analysis.endExecution();
-});
+//@ts-ignore
+(function(sandbox) {
+  const analysis = new AintNodeTaint();
+  J$.addAnalysis(analysis);
+
+  process.on('exit', function() {
+    console.log('exit handler called');
+    analysis.endExecution();
+  });
+})(J$);
+
+
 
 const policyFile = process.env.POLICY_FILE;
 if (policyFile) {

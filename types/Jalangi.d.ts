@@ -29,6 +29,9 @@ export interface Jalangi {
 
   analysis?: JalangiAnalysis;
 
+  addAnalysis(analysis: JalangiAnalysis): void;
+  addAnalysis(analysis: JalangiAnalysis, filterConfig: {[key: string]: any}): void;
+
   smemory?: {
 
     getShadowObject(
