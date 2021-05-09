@@ -368,7 +368,7 @@ class AintNodeTaint implements JalangiAnalysis {
         this.popIfFound(Function.prototype.apply, `invoke ${f.name}`, iid);
         this.taintStack.push({val : base, taint : Label.LOW_LEVEL});
         let argsArr = <ShadowedArray>(taintArgs.val);
-        for (let i = 0; i < argsArr.length; i++) {
+        for (let i = 0;argsArr && i < argsArr.length; i++) {
           if (argsArr.shadow && argsArr.shadow[i])
             this.taintStack.push(new Taint(argsArr[i], argsArr.shadow[i]));
           else
