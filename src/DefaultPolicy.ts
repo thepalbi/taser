@@ -27,6 +27,11 @@ let instrumentedTransitiveDeps: string[] = [];
 console.log("library module name " + libraryName);
 let mainModuleFile: string = undefined;
 
+const
+  http = require('http'),
+  https = require('https');
+
+
 // Notice, LIBRARY_ROOT_PATH serves both as a flag and as a path.
 // It's set whenever we're running a test suite of the library itself.
 // In that case, the value it has is the root path to the library itself.
@@ -36,7 +41,8 @@ if (process.env.LIBRARY_ROOT_PATH) {
   const pkgJson = JSON.parse(fs.readFileSync(
       path.resolve(process.env.LIBRARY_ROOT_PATH, "package.json")));
   if (pkgJson) {
-    mainModuleFile = path.resolve(process.env.LIBRARY_ROOT_PATH, pkgJson.main);
+    let fallbackedMain = pkgJson.main == undefined ? "index.js" : pkgJson.main;
+    mainModuleFile = path.resolve(process.env.LIBRARY_ROOT_PATH, fallbackedMain);
   }
 }
 
@@ -259,6 +265,12 @@ PolicyHelper.addSink(String.prototype.match, "String.prototype.match",
 PolicyHelper.addSink(String.prototype.search, "String.prototype.search",
                      "RegExpInjection",
                      [ function(args) { return args.length === 1; } ]);
+
+/* Sinks corresponding to http and https request libraries */
+PolicyHelper.addSink(http.request, "Http.prototype.request", "ExternalClientInjection",
+                     [ true ]);
+PolicyHelper.addSink(https.request, "Https.prototype.request", "ExternalClientInjection",
+                     [ true ]);
 
 /* Sinks corresponding to NoSQL.qll */
 function markMongoSinks(mongodb: any) {
