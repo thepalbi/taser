@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Taser dependencies
+GRAAL_JAVA_HOME=/home/pbalbi/opt/openjdk1.8.0_172-jvmci-0.46
+MX_BINARY=/home/pbalbi/repos/mx/mx
+NODEPROF_LOC=/persistent2/tsm-setup/workspace-nodeprof/nodeprof.js
+
+# Taser configs
+POLICY_USED=/persistent2/tsm-setup/taser/dist/src/DefaultPolicy.js
+TASER_ANALISYS_LOC=/persistent2/tsm-setup/taser/dist/src/AintNodeTaint.js
+
+echo "Reading package.json"
+LIBRARY_NAME=$(cat package.json|jq ".name")
+echo "Library name [$LIBRARY_NAME]"
+
+JAVA_HOME=$GRAAL_JAVA_HOME\
+    POLICY_FILE=$POLICY_USED\
+    POLICY_OUT="model.json"\
+    LIBRARY_UNDER_TEST=$LIBRARY_NAME\
+    $MX_BINARY -p $NODEPROF_LOC jalangi --analysis $TASER_ANALISYS_LOC "$@"
+
+# /tmp/biggora-express-useragent/node_modules/.bin/nodeunit /tmp/biggora-express-useragent/test/tests.js

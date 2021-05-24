@@ -51,7 +51,7 @@ export class CodeAnalyzer {
           cacheEntry,
           cacheEntry.locToObj);
       } catch (e) {
-        console.log("Unable to parse script: " + path)
+       console.log("Unable to parse script: " + path)
       }
     }
     return this.cache[path];

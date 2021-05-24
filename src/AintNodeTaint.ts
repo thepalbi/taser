@@ -11,6 +11,7 @@ import {SMemory} from "./SMemory";
 import {CodeAnalyzer} from "./SourceCodeAnalyzer.js";
 import {Propagation, Sink, TaintModel} from "./TaintModel";
 import {ViolationMessenger} from "./ViolationMessenger";
+import {dLog} from "./logging";
 
 import _ = require("lodash");
 // for whatever reason TS fails to find this on my machine;
@@ -407,7 +408,7 @@ class AintNodeTaint implements JalangiAnalysis {
             if (!taintArgi) {
               PRINT_STACK_MISSES &&
               //@ts-ignore
-              console.log("No taint for arg " + i + " : " + args[i] + " " + f.name);
+              dLog("No taint for arg " + i + " : " + args[i] + " " + f.name);
               taintArgs[i] = new Taint(args[i], Label.LOW_LEVEL);
             } else {
               // if (typeof taintArgi.val != typeof args[i] ||
@@ -467,7 +468,7 @@ class AintNodeTaint implements JalangiAnalysis {
         }
       } else if (f === this.policyHelper.addSink) {
         if (args[0]) {
-          console.log("Marked sink " + args[0].name);
+          dLog("Marked sink " + args[0].name);
           this.policySinks[args[0]] = new SinkPointer(
             args[1], args[2],
             <(boolean | ((args: any[]) => boolean))[]>args[3]);
@@ -513,7 +514,7 @@ class AintNodeTaint implements JalangiAnalysis {
 
       if (f === this.policyHelper.sink || sinkProps) {
         //@ts-ignore don't know why the Decl doesn't have the name prop on funcs
-        console.log("Hit the sink " + f.name);
+        dLog("Hit the sink " + f.name);
         for (let j = args.length - 1; j >= 0; j--) {
           let isSink = !sinkProps;
           if (sinkProps) {
@@ -566,7 +567,7 @@ class AintNodeTaint implements JalangiAnalysis {
       var currLabels = LabelOps.getLabelNamesFromLabel(taint);
       for (var i = 0; i < currLabels.length; i++) {
         //@ts-ignore
-        console.log("Taint violation at sink " + f.name +
+        dLog("Taint violation at sink " + f.name +
           ", with value=" + arg + " and label=" + currLabels[i]);
         let newSink: Sink = {
           accessPath : currLabels[i],
@@ -683,10 +684,10 @@ class AintNodeTaint implements JalangiAnalysis {
         this.declassifyRecursively(result, args[1], []);
       } else if (f === this.policyHelper.source) {
         try {
-          console.log("Variable marked:" + result + " with " + args[1] +
+          dLog("Variable marked:" + result + " with " + args[1] +
             ", source " + args[2]);
         } catch(e) {
-          console.log("Variable marked: object with " + args[1] +
+          dLog("Variable marked: object with " + args[1] +
             ", source " + args[2]);
         }
         if (taintArgs && taintArgs[0] && taintArgs[0].taint.intersect)

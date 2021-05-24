@@ -1,11 +1,10 @@
 import * as path from "path";
-import {ParsedPath} from "path";
 
-import {Meta} from "./MetaHelper";
 import {PolicyHelper} from "./PolicyHelper";
 import {NonInstrPolicyHelper} from "./NonInstrPolicyHelper";
 import {ProxyConstants} from "./ProxyConstants";
 import {toSemmleFormat, toSemmleFormatLibraryTest} from "./toSemmleFormat";
+import {dLog} from "./logging";
 
 const callsites = require('callsites');
 
@@ -326,7 +325,7 @@ function markMongoSinks(mongodb: any) {
 }
 
 function wrapInProxy(obj: any, accessPath: string, isEntry: boolean): any {
-  console.log(`Wrapping ${accessPath}`);
+  dLog(`Wrapping ${accessPath}`);
   if (typeof obj === "function") {
     if (NonInstrPolicyHelper.isNonNativeFunction(obj)) {
       return wrapSingle(obj, accessPath, isEntry, obj);
@@ -439,7 +438,7 @@ function wrapSingle(obj: {[index: string]: any}, accessPath: string,
 
     apply : function(target: {[index: string]: any}, thisArg: any,
                      argumentsList: any) {
-      console.log(`Called ${accessPath}[${argumentsList.length}]`);
+      dLog(`Called ${accessPath}[${argumentsList.length}]`);
       let newAP = `(return ${accessPath})`;
       let args = argumentsList;
       if (noTaintsPerObject < MAX_TAINTS_PER_OBJECT) {
@@ -462,7 +461,7 @@ function wrapSingle(obj: {[index: string]: any}, accessPath: string,
     },
 
     construct : function(target: any, argArray: any) {
-      console.log(`Called constructor ${accessPath}`);
+      dLog(`Called constructor ${accessPath}`);
       let args = argArray;
       if (noTaintsPerObject < MAX_TAINTS_PER_OBJECT) {
         noTaintsPerObject += argArray.length;
