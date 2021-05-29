@@ -516,7 +516,9 @@ class AintNodeTaint implements JalangiAnalysis {
         //@ts-ignore don't know why the Decl doesn't have the name prop on funcs
         dLog("Hit the sink " + f.name);
         for (let j = args.length - 1; j >= 0; j--) {
+          // First, if sinkProps is null or undefined, isSink will evaluate to true
           let isSink = !sinkProps;
+          // If sinkProps is a value, evaluate!
           if (sinkProps) {
             let argSpec = sinkProps.argSpecs[j];
             isSink =

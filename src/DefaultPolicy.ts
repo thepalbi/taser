@@ -6,6 +6,8 @@ import {ProxyConstants} from "./ProxyConstants";
 import {toSemmleFormat, toSemmleFormatLibraryTest} from "./toSemmleFormat";
 import {dLog} from "./logging";
 
+import request from "request-promise";
+
 const callsites = require('callsites');
 
 //@ts-ignore
@@ -270,6 +272,7 @@ PolicyHelper.addSink(http.request, "Http.prototype.request", "ExternalClientInje
                      [ true ]);
 PolicyHelper.addSink(https.request, "Https.prototype.request", "ExternalClientInjection",
                      [ true ]);
+PolicyHelper.addSink(request, "Request-Promise.prototype.request", "ExternalClientInjection", [true]);
 
 /* Sinks corresponding to NoSQL.qll */
 function markMongoSinks(mongodb: any) {

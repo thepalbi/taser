@@ -3,6 +3,7 @@ import estraverse = require("estraverse");
 import fs = require("fs");
 import path_m = require("path");
 import {CodeSnippetLocation} from "../types/Jalangi";
+import { dLog } from "./logging";
 
 /**
  * Copyright 2019 Software Lab, TU Darmstadt, Germany
@@ -51,7 +52,7 @@ export class CodeAnalyzer {
           cacheEntry,
           cacheEntry.locToObj);
       } catch (e) {
-       console.log("Unable to parse script: " + path)
+       dLog("Unable to parse script: " + path)
       }
     }
     return this.cache[path];
