@@ -18,9 +18,9 @@ import _ = require("lodash");
 declare var require: any;
 const PRINT_HOOKS = false;
 const PRINT_LOC = false;
-const PRINT_ARGS_STACK = false;
-const PRINT_TAINT_STACK = false;
-const PRINT_STACK_MISSES = false;
+const PRINT_ARGS_STACK = true;
+const PRINT_TAINT_STACK = true;
+const PRINT_STACK_MISSES = true;
 const STACK_ELEMENTS_TO_PRINT = 5;
 const TAINTED_KEYS_GENERIC_MEMBERS = true;
 
@@ -528,12 +528,17 @@ class AintNodeTaint implements JalangiAnalysis {
               argSpec === true || (_.isFunction(argSpec) && argSpec(args));
           }
           if (isSink) {
+            dLog("It's actually a sink. Checking taint!");
             let taintEntry = taintArgs[j];
+            dLog("Current taintEntry: %s", JSON.stringify(taintEntry));
             if (taintEntry.val === args[j]) {
+              dLog("1");
               if (sinkProps) {
+                dLog("2");
                 this.verifyTaint(args[j], taintEntry.taint, f, sinkProps.id,
                   sinkProps.queryID);
               } else {
+                dLog("3");
                 this.verifyTaint(args[j], taintEntry.taint, f, args[1],
                   "DefaultQuery");
               }
@@ -568,7 +573,9 @@ class AintNodeTaint implements JalangiAnalysis {
 
   verifyTaint(arg: any, taint: Label, f: Function, sinkID: string,
               queryID: string): void {
+    dLog("taint: %s, isLow: %s", taint, taint.equals(Label.LOW_LEVEL));
     if (LabelOps.isTainted(taint)) {
+      dLog("4");
       var currLabels = LabelOps.getLabelNamesFromLabel(taint);
       for (var i = 0; i < currLabels.length; i++) {
         //@ts-ignore
