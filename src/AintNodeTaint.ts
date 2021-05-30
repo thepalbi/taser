@@ -468,7 +468,10 @@ class AintNodeTaint implements JalangiAnalysis {
         }
       } else if (f === this.policyHelper.addSink) {
         if (args[0]) {
-          dLog("Marked sink " + args[0].name);
+          let funName = args[0].name;
+          let funAsString = String(args[0]);
+          let funSummary = funAsString.substr(0, Math.min(50, funAsString.length));
+          console.log("Marked sink %s key=[%s]", funName, funSummary);
           this.policySinks[args[0]] = new SinkPointer(
             args[1], args[2],
             <(boolean | ((args: any[]) => boolean))[]>args[3]);
